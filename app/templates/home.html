@@ -1,0 +1,126 @@
+{% extends "base.html" %} {% block title %} Home page {% endblock%}
+{%block content%}
+<div class="w-75 h-100 d-flex flex-column">
+    <div class="d-flex w-100">
+        <div class="input-group mb-3 mt-3 w-25">
+            <select id="search-box-conns" class="custom-select" onchange="filterProducts()">
+                <option value="1">Wszystkie</option>
+                <option value="2">Produkty z połączeniami</option>
+                <option value="3">Produkty bez połączeń</option>
+            </select>
+        </div>
+        <div class="input-group mb-3 mt-3 w-25">
+            <input type="text" id="search-box-id" class="form-control" placeholder="Id"onkeyup="filterProducts()">
+        </div>
+
+        <div class="input-group mb-3 mt-3 w-75">
+            <input type="text" id="search-box-name" class="form-control" placeholder="Nazwa produktu"onkeyup="filterProducts()">
+        </div>
+    </div>
+    <div>
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Nazwa produktu</th>
+                    <th scope="col">Nasza cena</th>
+                    <th scope="col">Cena Sferis</th>
+                    <th scope="col">Cena Neonet</th>
+                    <th scope="col">Cena Gsm24</th>
+                    <th scope="col">Cena Komputronik</th>
+                    <th scope="col">Edycja</th>
+                </tr>
+            </thead>
+            <tbody id="products-tbody">
+                <!--Ładowanie produktów poprzez js-->
+            </tbody>
+        </table>
+        <nav aria-label="..." class="w-100">
+            <ul class="pagination w-100 d-flex justify-content-between">
+              <li class="page-item">
+                <button class="page-item btn btn-secondary" id="prev-page" onclick="changePage(-1)">Poprzednia</button>
+              </li>
+              <li class="page-item">
+                <span id="page-number"></span>
+              </li>
+              <li class="page-item">
+                <button class="page-item btn btn-secondary" id="next-page" onclick="changePage(1)">Następna</button>
+              </li>
+            </ul>
+          </nav>
+    </div>
+</div>
+<script>
+let currentPage = 1;
+const pageSize = 10; // Ilość elementów na stronie
+let products = []; // Lista produktów, którą będziemy paginować
+let delayTimer;
+
+function renderTablePage() {
+    const productsTableBody = document.getElementById('products-tbody');
+    productsTableBody.innerHTML = ''; // Wyczyść aktualne wiersze
+
+    // Oblicz indeksy elementów do wyświetlenia
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+
+    const pageProducts = products.slice(start, end); // Produkty na bieżącej stronie
+
+    // Renderowanie wierszy tabeli
+    pageProducts.forEach(product => {
+        const row = `<tr>
+    <th scope="row">${product.id}</th>
+    <td>${product.nazwa}</td>
+    <td>${product.cena.toFixed(2)} zł</td>
+    <td>${product.urlSferis ? `<a href="${product.urlSferis}">${product.cenaSferis} zł</a>` : 'brak'}</td>
+    <td>${product.urlNeonet ? `<a href="${product.urlNeonet}">${product.cenaNeonet} zł</a>` : 'brak'}</td>
+    <td>${product.urlGsm ? `<a href="${product.urlGsm}">${product.cenaGsm} zł</a>` : 'brak'}</td>
+    <td>${product.urlKomputronik ? `<a href="${product.urlKomputronik}">${product.cenaKomputronik} zł</a>` : 'brak'}</td>
+    <td><a class="btn btn-secondary" href="/crawler/edit/${product.id}">Edytuj</a></td>
+</tr>`;
+        productsTableBody.innerHTML += row;
+    });
+
+    // Aktualizuj numer strony
+    document.getElementById('page-number').textContent = `Strona ${currentPage} z ${Math.ceil(products.length / pageSize)}`;
+    document.getElementById('prev-page').disabled = currentPage === 1;
+    document.getElementById('next-page').disabled = currentPage === Math.ceil(products.length / pageSize);
+    
+}
+// Funkcja do zmiany strony
+function changePage(step) {
+    currentPage += step;
+    renderTablePage();
+}
+
+function filterProducts() {
+    clearTimeout(delayTimer); // Zatrzymaj poprzedni timer
+
+    // Ustaw nowy timer
+    delayTimer = setTimeout(() => {
+        const queryName = document.getElementById('search-box-name').value; // Pobierz frazę wyszukiwania
+        const queryId = document.getElementById('search-box-id').value;
+        const queryConns = document.getElementById("search-box-conns").value;
+        console.log(queryConns)
+
+        // Wyślij zapytanie do serwera z frazą wyszukiwania
+        fetch(`/crawler/filter-products/?id=${queryId}&name=${encodeURIComponent(queryName)}&conns=${encodeURIComponent(queryConns)}`)
+            .then(response => response.json())
+            .then(data => {
+                products = data.products; // Zaktualizuj produkty
+                currentPage = 1; // Zresetuj stronę do pierwszej
+                renderTablePage(); // Renderuj bieżącą stronę
+            })
+            .catch(error => console.error('Error:', error));
+    }, 500); // Opóźnienie 500 ms (możesz dostosować wedle potrzeb)
+}
+
+// Załaduj dane przy starcie
+filterProducts();
+if(products.length == 0){
+        document.getElementById('prev-page').disabled = true;
+        document.getElementById('next-page').disabled = true;
+        document.getElementById('page-number').textContent = 'Strona 0 z 0'
+    }
+</script>
+{%endblock%}

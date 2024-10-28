@@ -1,0 +1,98 @@
+{% extends "base.html" %} {% block title %} Home page {% endblock%}
+{%block content%}
+<div class="w-75 h-100 d-flex flex-column">
+     <!--
+    górny div to pole to wyszukiwania i przycisk ładujący do tabeli
+    dolny div to tabela
+     -->
+    <div class="d-flex justify-content-center flex-column">
+        <h4>Edytowany produkt</h4>
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th scope="col" >{{product.id}}</th>
+                    <th scope="col">{{product.nazwa}}</th>
+                    <th scope="col">{{product.cena}} zł</th>
+                </tr>
+            </thead>
+        </table>    
+    </div>
+    <form method="POST">
+        {% csrf_token %}
+    <div>   
+        <div class="w-100 d-flex flex-column">
+            <h4>Sferis:</h4>
+            
+                <input class="form-control" name="sferis" list="sferisBrowse" value="{{connectedNames.0.nazwaSferis}}" {%if connectedNames.0.nazwaSferis == product.nazwa%} disabled {%endif%} id="inputSferis">
+            <datalist id="sferisBrowse">
+                {%for m in sferis%}
+                    <option value="{{m.nazwa}}">
+                {%endfor%}
+            </datalist> 
+        </div>
+        <div class="w-100 d-flex flex-column">
+            <h4>Neonet:</h4>
+                <input class="form-control" name="neonet"  list="neonetBrowse" value="{{connectedNames.0.nazwaNeonet}}" {%if connectedNames.0.nazwaNeonet == product.nazwa%} disabled {%endif%} id="inputNeonet">
+            <datalist id="neonetBrowse">
+                <!--Opcje będą wyświetlane 10 pierwszych elementów z tablicy wpisanej frazy-->
+            {%for j in neonet%}
+                <option value="{{j.nazwa}}">
+            {%endfor%}
+            </datalist> 
+        </div>
+        <div class="w-100 d-flex flex-column">
+            <h4>Gsm24:</h4>
+            <input class="form-control" name="gsm"  list="gsmBrowse" value="{{connectedNames.0.nazwaGsm}}"{%if connectedNames.0.nazwaGsm == product.nazwa%} disabled {%endif%} id="inputGsm">          
+           <datalist id="gsmBrowse">
+                {%for e in gsm%}
+                    <option value="{{e.nazwa}}">
+                {%endfor%}
+            </datalist> 
+        </div>
+        <div class="w-100 d-flex flex-column mb-3">
+            <h4>Komputronik:</h4>
+                <input class="form-control" name="komputronik"  list="komputronikBrowse" value="{{connectedNames.0.nazwaKomputronik}}" {%if connectedNames.0.nazwaKomputronik == product.nazwa%} disabled {%endif%} id="inputKomputronik">          
+            <datalist id="komputronikBrowse">
+                {%for e in komputronik%}
+                    <option value="{{e.nazwa}}">
+                {%endfor%}
+            </datalist> 
+        </div>
+        <div>
+                <input type="checkbox" name="checkSferis" {%if connectedNames.0.nazwaSferis == product.nazwa%} checked {%endif%} id="checkSferis" onclick="toggleInput('checkSferis','inputSferis')">
+            <label>Wyłącz powiązanie do produktu z Sferis</label>
+        </div>
+        <div>
+            <div>
+                <input type="checkbox" name="checkNeonet" {%if connectedNames.0.nazwaNeonet == product.nazwa%}checked{%endif%} id="checkNeonet" onclick="toggleInput('checkNeonet','inputNeonet')">
+                <label>Wyłącz powiązanie do produktu z Neonet</label>
+            </div>
+            <div>
+                <input type="checkbox" name="checkGsm" {%if connectedNames.0.nazwaGsm == product.nazwa%} checked {%endif%} id="checkGsm" onclick="toggleInput('checkGsm','inputGsm')">
+                <label>Wyłącz powiązanie do produktu z Gsm</label>
+            </div>
+            <div>
+                <input type="checkbox" name="checkKomputronik" {% if connectedNames.0.nazwaKomputronik == product.nazwa%} checked {% endif %} id="checkKomputronik" onclick="toggleInput('checkKomputronik','inputKomputronik')">
+                <label>Wyłącz powiązanie do produktu z Komputronik</label>
+            </div>
+        
+            <button class="btn btn-secondary mt-2" type="submit">Zapisz zmiany</button>
+
+        </form>
+        {%if error_message%}
+            <script>
+                alert("{{error_message}}")
+            </script>
+        {%endif%}
+    </div>
+</div>
+
+<script>
+    function toggleInput(checkboxID, inputID) {
+        const checkbox = document.getElementById(checkboxID);
+        const input = document.getElementById(inputID);
+
+        input.disabled = checkbox.checked
+    }
+</script>
+{%endblock%}
