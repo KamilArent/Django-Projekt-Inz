@@ -39,12 +39,10 @@ def saveData(produkty, tabela):
                         )
     
         conn.commit()
-        
+        conn.close()
     except Exception as e:
         print(f"Błąd podczas zapisywania danych do {tabela}: {e}")
-    finally:
-        if conn:
-            conn.close()
+            
 
 
 def fillProduktyMockData():
@@ -70,12 +68,11 @@ def fillProduktyMockData():
                 product_id, name, category, price
             )
         cursor.commit()
+        conn.close()
         
     except Exception as e:
         print(f"Błąd podczas tworzenia dancych produktów sklepu: {e}")
-    finally:
-        if conn:
-            conn.close()
+            
 
 
 def addEditConnection(id, nazwaSferis, nazwaNeonet,nazwaGsm, nazwaKomputronik):
@@ -108,22 +105,20 @@ def addEditConnection(id, nazwaSferis, nazwaNeonet,nazwaGsm, nazwaKomputronik):
             cursor.execute(statement, nazwaSferis,nazwaNeonet,nazwaGsm,nazwaKomputronik,id)
 
         cursor.commit()
+        conn.close()
     except Exception as e:
         print(f'Błąd: {e}')
-    finally:
-        if conn:
-            conn.close()
+            
 
 def removeConnection(id):
     try:
         conn = pyodbc.connect(connectionString) 
         statement = f"DELETE ProduktyConnections WHERE id = {id}"
         conn.cursor().execute(statement).commit()
+        conn.close()
     except Exception as e:
         print(f'Błąd przy usuwaniu połączenia: {e}')
-    finally:
-        if conn:
-            conn.close()
+            
 
 
 def selectConnectionId(id):
@@ -131,12 +126,12 @@ def selectConnectionId(id):
         conn = pyodbc.connect(connectionString) 
         statement = f"SELECT * FROM ProduktyConnections WHERE id = {id}"
         res = conn.cursor().execute(statement)
-        return res.fetchall()
+        res = res.fetchall()
+        conn.close()
+        return res
     except Exception as e:
         print(f'Błąd przy usuwaniu połączenia: {e}')
-    finally:
-        if conn:
-            conn.close()
+            
 
 
 
@@ -155,12 +150,12 @@ def selectNajnowsze(tabela):
                 WHERE rn = 1;"""
         cursor = conn.cursor()
         cursor.execute(test_st)
-        return cursor.fetchall()
+        res = cursor.fetchall()
+        conn.close()
+        return res
     except Exception as e:
         print(f"Błąd podczas pobierania najnowszych danych z {tabela}: {e}")
-    finally:
-        if conn:
-            conn.close()
+            
 
 def selectAll(tabela):
     try:
@@ -168,9 +163,9 @@ def selectAll(tabela):
         st = f"SELECT * FROM [dbo].[{tabela}]"
         cursor = conn.cursor()
         cursor.execute(st)
-        return cursor.fetchall()
+        res = cursor.fetchall()
+        conn.close()
+        return res
     except Exception as e:
         print(f'Błąd podczas wybierania z {tabela}: {e}')
-    finally:
-        if conn:
-            conn.close()
+            

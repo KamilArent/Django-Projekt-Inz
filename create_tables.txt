@@ -1,0 +1,80 @@
+USE [engineer]
+GO
+
+/****** Object:  Table [dbo].[neonet]    Script Date: 24.10.2024 09:28:58 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[neonet]') AND type in (N'U'))
+DROP TABLE [dbo].[neonet]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[komputronik]') AND type in (N'U'))
+DROP TABLE [dbo].[komputronik]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[sferis]') AND type in (N'U'))
+DROP TABLE [dbo].[sferis]
+GO
+
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[gsm24]') AND type in (N'U'))
+DROP TABLE [dbo].[gsm24]
+GO
+
+/****** Object:  Table [dbo].[neonet]    Script Date: 24.10.2024 09:28:58 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[neonet](
+	[nazwa] [nvarchar](max) NULL,
+	[kategoria] [nvarchar](max) NULL,
+	[cena] [decimal](10, 2) NULL,
+	[url] [nvarchar](max) NULL,
+	[data] [date] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[komputronik](
+	[nazwa] [nvarchar](max) NULL,
+	[kategoria] [nvarchar](max) NULL,
+	[cena] [decimal](10, 2) NULL,
+	[url] [nvarchar](max) NULL,
+	[data] [date] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[sferis](
+	[nazwa] [nvarchar](max) NULL,
+	[kategoria] [nvarchar](max) NULL,
+	[cena] [decimal](10, 2) NULL,
+	[url] [nvarchar](max) NULL,
+	[data] [date] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[gsm24](
+	[nazwa] [nvarchar](max) NULL,
+	[kategoria] [nvarchar](max) NULL,
+	[cena] [decimal](10, 2) NULL,
+	[url] [nvarchar](max) NULL,
+	[data] [date] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[produkty](
+	[id] [int] NOT NULL,
+	[nazwa] [nvarchar](max) NULL,
+	[kategoria] [nvarchar](max) NULL,
+	[cena] [decimal](10, 2) NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE TABLE [dbo].[produktyConnections](
+	[id] [int] NOT NULL,
+	[nazwaSferis] [nvarchar](max) NULL,
+	[nazwaNeonet] [nvarchar](max) NULL,
+	[nazwaGsm] [nvarchar](max) NULL,
+	[nazwaKomputronik] [nvarchar](max) NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
